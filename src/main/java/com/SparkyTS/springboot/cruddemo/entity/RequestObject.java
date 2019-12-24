@@ -2,91 +2,72 @@ package com.SparkyTS.springboot.cruddemo.entity;
 
 import java.sql.Timestamp;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name="user")
-public class User {
-	
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id")
+public class RequestObject {
 	private int id;
-
-	@Column(name="username")
 	private String username;
-	
-	@Column(name="password")
 	private String password;
-	
-	@Column(name="status")
-	private Boolean enabled;
-	
-	@Column(name="created_on")
+	private boolean enabled;
 	private Timestamp createdOn;
-	
-	@Column(name="updated_on")
 	private Timestamp updatedOn;
+	private String authority;
 	
-	public User() {}
-
 	public int getId() {
 		return id;
 	}
-
 	public void setId(int id) {
 		this.id = id;
 	}
-
 	public String getUsername() {
 		return username;
 	}
-
 	public void setUsername(String username) {
 		this.username = username;
 	}
-
 	public String getPassword() {
 		return password;
 	}
-
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
-	public Boolean getEnabled() {
+	public boolean isEnabled() {
 		return enabled;
 	}
-
-	public void setEnabled(Boolean enabled) {
+	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
-
 	public Timestamp getCreatedOn() {
 		return createdOn;
 	}
-
 	public void setCreatedOn(Timestamp createdOn) {
 		this.createdOn = createdOn;
 	}
-
 	public Timestamp getUpdatedOn() {
 		return updatedOn;
 	}
-
 	public void setUpdatedOn(Timestamp updatedOn) {
 		this.updatedOn = updatedOn;
 	}
+	public String getAuthority() {
+		return authority;
+	}
+	public void setAuthority(String authority) {
+		this.authority = authority;
+	}
 	
+	public User getUser() {
+		User user = new User();
+		user.setId(id);
+		user.setUsername(username);
+		user.setPassword(password);
+		user.setEnabled(enabled);
+		user.setCreatedOn(createdOn);
+		user.setUpdatedOn(updatedOn);
+		return user;
+	}
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", username=" + username + ", password=" + password + ", enabled=" + enabled
-				+ ", createdOn=" + createdOn + ", updatedOn=" + updatedOn +"]";
+		return "RequestObject [username=" + username + ", password=" + password + ", enabled=" + enabled
+				+ ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + ", authority=" + authority + "]";
 	}
 	
 }

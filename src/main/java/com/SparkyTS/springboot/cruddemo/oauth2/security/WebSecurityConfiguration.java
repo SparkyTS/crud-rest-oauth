@@ -43,7 +43,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		.usersByUsernameQuery(
 			"select username,password, status from user where username=?")
 		.authoritiesByUsernameQuery(
-			"select username, role from authorities where username=?");
+			"SELECT u.username as username, a.role AS role FROM user u INNER JOIN user_authorities uaj ON uaj.user_id = u.id INNER JOIN authorities a ON a.id = uaj.authority_id where u.username=?");
     }
 	
 	@SuppressWarnings("deprecation")
@@ -54,7 +54,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 //	
 	
 //	@Bean
-//	public BCryptPasswordEncoder BCryptPasswordEncoder() {
+//	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 //		return new BCryptPasswordEncoder();
 //	}
 

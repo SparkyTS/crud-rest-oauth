@@ -2,8 +2,6 @@ package com.SparkyTS.springboot.cruddemo.entity;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-
 public class Response{
 
 	private int status;
