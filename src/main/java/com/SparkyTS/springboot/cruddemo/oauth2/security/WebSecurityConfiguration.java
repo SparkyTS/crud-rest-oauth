@@ -5,6 +5,7 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -13,71 +14,60 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.approval.ApprovalStore;
-import org.springframework.security.oauth2.provider.approval.TokenApprovalStore;
-import org.springframework.security.oauth2.provider.approval.TokenStoreUserApprovalHandler;
-import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {	
-	
+@Order(1)
+public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
 	@Autowired
 	private DataSource securityDataSource;
-	
-//	@Autowired
-//	private BCryptPasswordEncoder bCryptPasswordEncoder;
-	
+//	 
+//	@Bean
+//	public BCryptPasswordEncoder passwordEncoder() {
+//		return new BCryptPasswordEncoder();
+//	}
+
 	@Autowired
-    public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
+	public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
 //        auth.inMemoryAuthentication()
 //        .withUser("admin").password("admin").roles("ADMIN").and()
 //        .withUser("manager").password("manager").roles("MANAGER").and()
 //        .withUser("employee").password("employee").roles("EMPLOYEE");
 //		auth.jdbcAuthentication().dataSource(securityDataSource).passwordEncoder(passwordEncoder());
-		auth.jdbcAuthentication().dataSource(securityDataSource)
-		.usersByUsernameQuery(
-			"select username,password, status from user where username=?")
-		.authoritiesByUsernameQuery(
-			"SELECT u.username as username, a.role AS role FROM user u INNER JOIN user_authorities uaj ON uaj.user_id = u.id INNER JOIN authorities a ON a.id = uaj.authority_id where u.username=?");
-    }
-	
+		auth.jdbcAuthentication().dataSource(securityDataSource).passwordEncoder(passwordEncoder())
+				.usersByUsernameQuery("select username,password, status from user where username=?")
+				.authoritiesByUsernameQuery(
+						"SELECT u.username as username, a.role AS role FROM user u INNER JOIN user_authorities uaj ON uaj.user_id = u.id INNER JOIN authorities a ON a.id = uaj.authority_id where u.username=?");
+	}
+
 	@SuppressWarnings("deprecation")
 	@Bean
 	public NoOpPasswordEncoder passwordEncoder() {
 		return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
 	}
-//	
 	
-//	@Bean
-//	public BCryptPasswordEncoder bCryptPasswordEncoder() {
-//		return new BCryptPasswordEncoder();
-//	}
+//	
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-		http.requestMatchers().and()
-		.authorizeRequests() 
-		.antMatchers("/api/users/**").permitAll()
-		.antMatchers("/oauth/token").permitAll()
-		.antMatchers(HttpMethod.GET, "/api/employees").hasAnyRole("EMPLOYEE","MANAGER","ADMIN")
-		.antMatchers(HttpMethod.GET, "/api/employees/**").hasAnyRole("EMPLOYEE","MANAGER","ADMIN")
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.authorizeRequests().antMatchers("/oauth/token", "/api/users/**").permitAll()
+//		.antMatchers("/api/employees/**").permitAll()
+		.antMatchers(HttpMethod.GET, "/api/employees").hasAnyRole("EMPLOYEE", "MANAGER", "ADMIN")
+		.antMatchers(HttpMethod.GET, "/api/employees/**").hasAnyRole("EMPLOYEE", "MANAGER", "ADMIN")
 		.antMatchers(HttpMethod.POST, "/api/employees").hasAnyRole("MANAGER", "ADMIN")
 		.antMatchers(HttpMethod.POST, "/api/employees/**").hasAnyRole("MANAGER", "ADMIN")
 		.antMatchers(HttpMethod.PUT, "/api/employees").hasAnyRole("MANAGER", "ADMIN")
 		.antMatchers(HttpMethod.PUT, "/api/employees/**").hasAnyRole("MANAGER", "ADMIN")
-		.antMatchers(HttpMethod.DELETE, "/api/employees/**").hasRole("ADMIN");
+		.antMatchers(HttpMethod.DELETE, "/api/employees/**").hasRole("ADMIN")
+		.anyRequest().authenticated();
 		http.csrf().disable();
-    }
-    
-    @Override
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
+	}
+
+	@Override
+	@Bean
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
+	}
 
 }

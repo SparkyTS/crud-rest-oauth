@@ -20,8 +20,9 @@ public class UserDAOImpl implements UserDAO{
 
 	@Autowired
 	private EntityManager entityManger;
-//	@Autowired
-//	BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+//	@Autowired BCryptPasswordEncoder bCryptPasswordEncoder;
+	 
 	
 	@Override
 	public List<User> findAll() {
@@ -43,6 +44,8 @@ public class UserDAOImpl implements UserDAO{
 	
 		Session session = entityManger.unwrap(Session.class);
 //		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+//		BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+//		user.setPassword(bcrypt.encode(user.getPassword()));
 		
 		session.saveOrUpdate(user);
 		

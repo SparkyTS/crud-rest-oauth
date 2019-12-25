@@ -1,3 +1,4 @@
+
 package com.SparkyTS.springboot.cruddemo.oauth2.security;
 
 import org.springframework.context.annotation.Configuration;
@@ -9,12 +10,11 @@ import org.springframework.security.oauth2.provider.expression.OAuth2MethodSecur
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
 public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
-//    @SuppressWarnings("unused")
-//	@Autowired
-//    private WebSecurityConfiguration securityConfig;
-//    
-    @Override
-    protected MethodSecurityExpressionHandler createExpressionHandler() {
-        return new OAuth2MethodSecurityExpressionHandler();
-    }
+	// @SuppressWarnings("unused") // @Autowired 
+	// private WebSecurityConfiguration securityConfig; //
+
+	@Override
+	protected MethodSecurityExpressionHandler createExpressionHandler() {
+		return new OAuth2MethodSecurityExpressionHandler();
+	}
 }
