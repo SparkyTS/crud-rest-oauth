@@ -3,6 +3,8 @@ package com.SparkyTS.springboot.cruddemo.rest;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,6 +32,14 @@ public class UserRestController {
 	
 	@GetMapping("/users")
 	public List<User> getUsers(){
+		Authentication auth 
+        = SecurityContextHolder.getContext().getAuthentication();
+      if (auth != null) {
+    	  System.out.println("test :::::"+auth.getName());;
+      	auth.getAuthorities().forEach(auth1 ->{
+      		System.out.println("auth1.getAuthority() ::::"+auth1.getAuthority());
+      	});
+      }
 		List<User> users = userDAO.findAll();
 		return users;
 	}

@@ -7,7 +7,6 @@ import javax.transaction.Transactional;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import com.SparkyTS.springboot.cruddemo.entity.Authority;

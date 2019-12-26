@@ -16,8 +16,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 @Configuration
-@EnableWebMvc
-@ComponentScan(basePackages = "com.security.oauth")
+//@EnableWebMvc
+//@ComponentScan(basePackages = "com.security.oauth")
 @PropertySource("classpath:persistence-mysql.properties")
 public class DBConfiguration {
 

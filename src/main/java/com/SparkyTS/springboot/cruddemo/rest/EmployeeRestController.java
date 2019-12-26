@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +32,14 @@ public class EmployeeRestController {
 
 	@GetMapping("/employees")
 	public Response getEmployees(){
+		Authentication auth 
+        = SecurityContextHolder.getContext().getAuthentication();
+		System.out.println("test :::::"+auth.getName());
+      if (auth != null) {
+      	auth.getAuthorities().forEach(auth1 ->{
+      		System.out.println("auth1.getAuthority() ::::"+auth1.getAuthority());
+      	});
+      }
 		List<Employee> employees = employeeDAO.findAll();
 		return new Response(HttpStatus.FOUND.value(), "List of all employees", employees);
 	}

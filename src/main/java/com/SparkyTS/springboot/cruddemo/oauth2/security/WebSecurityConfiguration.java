@@ -12,8 +12,11 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 
 @Configuration
 @EnableWebSecurity
@@ -51,17 +54,28 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/oauth/token", "/api/users/**").permitAll()
-//		.antMatchers("/api/employees/**").permitAll()
+		http.authorizeRequests().antMatchers("/oauth/token", "/api/users/**", "/api/userDetails").permitAll()
 		.antMatchers(HttpMethod.GET, "/api/employees").hasAnyRole("EMPLOYEE", "MANAGER", "ADMIN")
-		.antMatchers(HttpMethod.GET, "/api/employees/**").hasAnyRole("EMPLOYEE", "MANAGER", "ADMIN")
-		.antMatchers(HttpMethod.POST, "/api/employees").hasAnyRole("MANAGER", "ADMIN")
+		.antMatchers(HttpMethod.GET, "/api/employees/**").hasAuthority("ROLE_ADMIN")
+		.antMatchers(HttpMethod.POST, "/api/employees").hasAuthority("ROLE_ADMIN")
 		.antMatchers(HttpMethod.POST, "/api/employees/**").hasAnyRole("MANAGER", "ADMIN")
 		.antMatchers(HttpMethod.PUT, "/api/employees").hasAnyRole("MANAGER", "ADMIN")
 		.antMatchers(HttpMethod.PUT, "/api/employees/**").hasAnyRole("MANAGER", "ADMIN")
 		.antMatchers(HttpMethod.DELETE, "/api/employees/**").hasRole("ADMIN")
 		.anyRequest().authenticated();
 		http.csrf().disable();
+		http.exceptionHandling().accessDeniedHandler((request, response, accessDeniedException) -> {
+			Authentication auth 
+	        = SecurityContextHolder.getContext().getAuthentication();
+			System.out.println("test :::::"+auth.getName());
+	      if (auth != null) {
+	      	auth.getAuthorities().forEach(auth1 ->{
+	      		System.out.println("auth1.getAuthority() ::::"+auth1.getAuthority());
+	      	});
+	      }
+            AccessDeniedHandler defaultAccessDeniedHandler = new AccessDeniedHandlerImpl();
+            defaultAccessDeniedHandler.handle(request, response, accessDeniedException);
+        });
 	}
 
 	@Override
